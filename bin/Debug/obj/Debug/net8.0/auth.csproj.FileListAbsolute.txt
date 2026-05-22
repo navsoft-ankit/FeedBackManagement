@@ -1,0 +1,7 @@
+/home/nav114/Feedback Management System/src/auth/obj/Debug/net8.0/auth.csproj.AssemblyReference.cache
+/home/nav114/Feedback Management System/src/auth/obj/Debug/net8.0/auth.GeneratedMSBuildEditorConfig.editorconfig
+/home/nav114/Feedback Management System/src/auth/obj/Debug/net8.0/auth.AssemblyInfoInputs.cache
+/home/nav114/Feedback Management System/src/auth/obj/Debug/net8.0/auth.AssemblyInfo.cs
+/home/nav114/Feedback Management System/src/auth/obj/Debug/net8.0/auth.csproj.CoreCompileInputs.cache
+/home/nav114/Feedback Management System/src/auth/obj/Debug/net8.0/auth.MvcApplicationPartsAssemblyInfo.cs
+/home/nav114/Feedback Management System/src/auth/obj/Debug/net8.0/auth.MvcApplicationPartsAssemblyInfo.cache
