@@ -9,5 +9,8 @@ namespace Authservice.Data;
         {
         }
         public DbSet<User> Users { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Option> Options { get; set; }
+        public DbSet<FeedbackForm> FeedbackForms { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
     }

@@ -1,6 +1,5 @@
 using Authservice.Models;
 using Authservice.Repository;
-using Authservice.Service;
 
 namespace Authservice.Service
 {
@@ -18,12 +17,12 @@ namespace Authservice.Service
             return await _feedbackRepository.GetAllFeedbacksAsync();
         }
 
-        public async Task<Feedback> GetFeedbackByIdAsync(int id)
+        public async Task<Feedback> GetFeedbackByIdAsync(Guid id)
         {
             return await _feedbackRepository.GetFeedbackByIdAsync(id);
         }
 
-        public async Task<List<Feedback>> GetFeedbacksByUserIdAsync(int userId)
+        public async Task<List<Feedback>> GetFeedbacksByUserIdAsync(Guid userId)
         {
             return await _feedbackRepository.GetFeedbacksByUserIdAsync(userId);
         }
@@ -38,7 +37,7 @@ namespace Authservice.Service
             await _feedbackRepository.UpdateFeedbackAsync(feedback);
         }
 
-        public async Task DeleteFeedbackAsync(int id)
+        public async Task DeleteFeedbackAsync(Guid id)
         {
             await _feedbackRepository.DeleteFeedbackAsync(id);
         }

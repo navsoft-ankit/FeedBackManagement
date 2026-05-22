@@ -17,7 +17,7 @@ namespace Authservice.Service
             return await _userRepository.GetAllUsersAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(Guid id)
         {
             return await _userRepository.GetUserByIdAsync(id);
         }
@@ -37,7 +37,7 @@ namespace Authservice.Service
             await _userRepository.UpdateUserAsync(user);
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(Guid id)
         {
             await _userRepository.DeleteUserAsync(id);
         }

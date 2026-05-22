@@ -1,15 +1,15 @@
 using Authservice.Models;
-
-namespace Authservice.Service
+public interface IFeedbackService
 {
-    public interface IFeedbackService
-    {
-        Task<List<Feedback>> GetAllFeedbacksAsync();
-        Task<Feedback> GetFeedbackByIdAsync(int id);
-        Task<List<Feedback>> GetFeedbacksByUserIdAsync(int userId);
+    Task<List<Feedback>> GetAllFeedbacksAsync();
 
-        Task AddFeedbackAsync(Feedback feedback);
-        Task UpdateFeedbackAsync(Feedback feedback);
-        Task DeleteFeedbackAsync(int id);
-    }
+    Task<Feedback> GetFeedbackByIdAsync(Guid id);
+
+    Task<List<Feedback>> GetFeedbacksByUserIdAsync(Guid userId);
+
+    Task AddFeedbackAsync(Feedback feedback);
+
+    Task UpdateFeedbackAsync(Feedback feedback);
+
+    Task DeleteFeedbackAsync(Guid id);
 }

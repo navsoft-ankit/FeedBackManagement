@@ -18,13 +18,13 @@ namespace Authservice.Repository
             return await _context.Feedbacks.ToListAsync();
         }
 
-        public async Task<Feedback> GetFeedbackByIdAsync(int id)
+        public async Task<Feedback> GetFeedbackByIdAsync(Guid id)
         {
             return await _context.Feedbacks
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
-        public async Task<List<Feedback>> GetFeedbacksByUserIdAsync(int userId)
+        public async Task<List<Feedback>> GetFeedbacksByUserIdAsync(Guid userId)
         {
             return await _context.Feedbacks
                 .Where(f => f.UserId == userId)
@@ -43,7 +43,7 @@ namespace Authservice.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteFeedbackAsync(int id)
+        public async Task DeleteFeedbackAsync(Guid id)
         {
             var feedback = await _context.Feedbacks.FindAsync(id);
 

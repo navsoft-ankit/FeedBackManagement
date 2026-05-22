@@ -18,12 +18,11 @@ namespace Authservice.Repository
             return await _context.Users.ToListAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
-        {
-            return await _context.Users
-                .FirstOrDefaultAsync(u => u.Id == id);
-        }
-
+        public async Task<User> GetUserByIdAsync(Guid id)
+{
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == id);
+}
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _context.Users
@@ -42,9 +41,9 @@ namespace Authservice.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(Guid id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
 
             if (user != null)
             {

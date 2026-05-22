@@ -11,10 +11,13 @@ builder.Services.AddControllers();
 // ---------------- SERVICES ----------------
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<IFormService, FormService>();
 
 // ---------------- REPOSITORIES ----------------
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
+
+
 
 // ---------------- DB CONTEXT ----------------
 builder.Services.AddDbContext<AppDbContext>(options =>

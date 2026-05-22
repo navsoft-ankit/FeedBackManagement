@@ -1,12 +1,8 @@
-namespace Authservice.Models;
+namespace Authservice.DTOs.Form;
 
-public class Feedback
+public class SubmitFeedbackDTO
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
-
     public Guid FormId { get; set; }
-
-    public Guid UserId { get; set; } 
 
     public string Name { get; set; }
 
@@ -14,7 +10,7 @@ public class Feedback
 
     public string Designation { get; set; }
 
-    public List<Answer> Answers { get; set; } = new();
+    public List<AnswerDTO> Answers { get; set; }
 
     public string FinalNote { get; set; }
 }
