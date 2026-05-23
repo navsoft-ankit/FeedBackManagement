@@ -102,6 +102,7 @@ public class FormService : IFormService
         };
     }
 
+    //Update Form
     public async Task<FormResponseDTO> UpdateFormAsync(Guid id, UpdateFormDTO dto)
     {
         var form = await _context.FeedbackForms.FindAsync(id);
@@ -115,4 +116,20 @@ public class FormService : IFormService
 
         return await GetFormAsync(id);
     }
+
+    //Delete Form
+
+    public async Task<bool> DeleteFormAsync(Guid id)
+    {
+        var form = await _context.FeedbackForms.FindAsync(id);
+
+        if (form == null) return false;
+
+        _context.FeedbackForms.Remove(form);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+
 }

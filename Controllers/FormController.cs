@@ -28,5 +28,20 @@ public class FormController : ControllerBase
         return Ok(await _service.GetFormAsync(id));
     }
 
-    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateForm(Guid id, UpdateFormDTO dto)
+    {
+        var result = await _service.UpdateFormAsync(id, dto);
+        return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        // Implement delete logic here
+        var result = await _service.DeleteFormAsync(id);
+        return Ok(result);
+    }
+
+
 }
