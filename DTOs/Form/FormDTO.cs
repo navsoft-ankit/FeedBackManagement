@@ -1,9 +1,7 @@
 using Authservice.DTOs.Form;
-using Authservice.Models;
-public class CreateFormDTO
+public class FormDTO
 {
     public string Title { get; set; }
     public string Description { get; set; }
-
-    public List<CreateQuestionDTO> Questions { get; set; }
+    public IEnumerable<object> Questions { get; internal set; }
 }

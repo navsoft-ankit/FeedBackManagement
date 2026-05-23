@@ -1,6 +1,8 @@
 using Authservice.Data;
-using Authservice.DTOs.Form;
 using Authservice.Models;
+using Microsoft.EntityFrameworkCore;
+using Authservice.DTOs.Form;
+
 
 namespace Authservice.Service;
 
@@ -13,49 +15,104 @@ public class FormService : IFormService
         _context = context;
     }
 
-   public async Task<FeedbackForm> CreateFormAsync(CreateFormDTO dto)
-{
-    var form = new FeedbackForm
+    // ✅ CREATE FORM
+    public async Task<FormResponseDTO> CreateFormAsync(CreateFormDTO dto)
     {
-        Title = dto.Title,
-        Description = dto.Description
-    };
-
-    _context.FeedbackForms.Add(form);
-    await _context.SaveChangesAsync();
-
-    foreach (var q in dto.Questions)
-    {
-        var question = new Question
+        var form = new FeedbackForm
         {
-            Text = q.Text,
-            Type = q.Type,
-            FormId = form.Id
+            Title = dto.Title,
+            Description = dto.Description
         };
 
-        _context.Questions.Add(question);
+        _context.FeedbackForms.Add(form);
         await _context.SaveChangesAsync();
 
-        if (q.Options != null)
+        var questionsDto = new List<QuestionDTO>();
+        foreach (var q in dto.Questions)
         {
-            foreach (var o in q.Options)
+            var question = new Question
             {
-                _context.Options.Add(new Option
+                Text = q.Text,
+                Type = q.Type,
+                FormId = form.Id
+            };
+
+            _context.Questions.Add(question);
+            await _context.SaveChangesAsync();
+
+            var optionsList = new List<string>();
+
+            if (q.Options != null)
+            {
+                foreach (var o in q.Options)
                 {
-                    Value = o,
-                    QuestionId = question.Id
-                });
+                    optionsList.Add(o);
+
+                    _context.Options.Add(new Option
+                    {
+                        Value = o,
+                        QuestionId = question.Id
+                    });
+                }
             }
+
+            questionsDto.Add(new QuestionDTO
+            {
+                Id = question.Id,
+                Text = question.Text,
+                Type = question.Type.ToString(),
+                Options = optionsList
+            });
         }
+
+        await _context.SaveChangesAsync();
+
+        return new FormResponseDTO
+        {
+            Id = form.Id,
+            Title = form.Title,
+            Description = form.Description,
+            Questions = questionsDto
+        };
     }
 
-    await _context.SaveChangesAsync();
-
-    return form;
-}
-
-    public async Task<FeedbackForm> GetFormAsync(Guid id)
+    // ✅ GET FORM
+    public async Task<FormResponseDTO> GetFormAsync(Guid id)
     {
-        return await _context.FeedbackForms.FindAsync(id);
+        var form = await _context.FeedbackForms
+            .Include(f => f.Questions)
+            .ThenInclude(q => q.Options)
+            .FirstOrDefaultAsync(f => f.Id == id);
+
+        if (form == null)
+            return null;
+
+        return new FormResponseDTO
+        {
+            Id = form.Id,
+            Title = form.Title,
+            Description = form.Description,
+            Questions = form.Questions.Select(q => new QuestionDTO
+            {
+                Id = q.Id,
+                Text = q.Text,
+                Type = q.Type.ToString(),
+                Options = q.Options.Select(o => o.Value).ToList()
+            }).ToList()
+        };
+    }
+
+    public async Task<FormResponseDTO> UpdateFormAsync(Guid id, UpdateFormDTO dto)
+    {
+        var form = await _context.FeedbackForms.FindAsync(id);
+
+        if (form == null) return null;
+
+        form.Title = dto.Title;
+        form.Description = dto.Description;
+
+        await _context.SaveChangesAsync();
+
+        return await GetFormAsync(id);
     }
 }

@@ -5,6 +5,7 @@ namespace Authservice.Service;
 
 public interface IFormService
 {
-    Task<FeedbackForm> CreateFormAsync(CreateFormDTO dto);
-    Task<FeedbackForm> GetFormAsync(Guid id);
+    Task<FormResponseDTO> CreateFormAsync(CreateFormDTO dto);
+    Task<FormResponseDTO> GetFormAsync(Guid id);
+    
 }
