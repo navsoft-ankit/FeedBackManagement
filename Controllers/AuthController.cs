@@ -12,26 +12,36 @@ namespace Authservice.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly IJwtService _jwtService;
 
-        public AuthController(IUserService userService)
+        public AuthController(IUserService userService, IJwtService jwtService)
         {
             _userService = userService;
+            _jwtService = jwtService;
         }
 
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+       [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
+    {
+        var existingUser = await _userService.GetUserByEmailAsync(registerDTO.Email);
+
+        if (existingUser != null)
         {
-            var user = new User
-            {
-                Name = registerDTO.Name,
-                Email = registerDTO.Email,
-                Password = registerDTO.Password
-            };
-
-            await _userService.AddUserAsync(user);
-
-            return Ok("User registered successfully.");
+            return BadRequest("User already exists with this email.");
         }
+
+        var user = new User
+        {
+            Name = registerDTO.Name,
+            Email = registerDTO.Email,
+            Password = registerDTO.Password,
+            Role = "User"
+        };
+
+        await _userService.AddUserAsync(user);
+
+        return Ok("User registered successfully.");
+    }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
@@ -41,7 +51,15 @@ namespace Authservice.Controllers
             if (user == null || user.Password != loginDTO.Password)
                 return Unauthorized("Invalid email or password.");
 
-            return Ok("Login successful.");
+            var token = _jwtService.GenerateToken(user);
+            return Ok(
+                new
+                {
+                    Message = $"{user.Role} logged in successfully",
+                    Role = user.Role,
+                    Token = token
+                }
+            );
         }
 
         [HttpPost("forgot-password")]

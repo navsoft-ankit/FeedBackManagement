@@ -135,3 +135,4 @@
 /home/nav114/Feedback Management System/src/Authservice/obj/Debug/net8.0/Authservice.genruntimeconfig.cache
 /home/nav114/Feedback Management System/src/Authservice/obj/Debug/net8.0/ref/Authservice.dll
 /home/nav114/Feedback Management System/src/Authservice/obj/Debug/net8.0/Authservice.sourcelink.json
+/home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll

@@ -2,29 +2,79 @@ using Microsoft.EntityFrameworkCore;
 using Authservice.Data;
 using Authservice.Repository;
 using Authservice.Service;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var configuration = builder.Configuration;
+
+// -------------------- SERVICES --------------------
+
 builder.Services.AddControllers();
 
-// Register services
+// 🔥 JWT SERVICE (IMPORTANT)
+builder.Services.AddScoped<IJwtService, JwtService>();
+
+// Business Services
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IFormService, FormService>();
 
-// Register repositories
+// Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IFeedbackRepository, FeedbackRepository>();
 
-// Database context
+// DB Context
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+);
 
-// Swagger/OpenAPI
+// -------------------- JWT AUTHENTICATION --------------------
+
+builder.Services.AddAuthentication(
+    options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    }
+)
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+
+        ValidIssuer = configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(configuration["Jwt:Key"])
+        )
+    };
+});
+
+builder.Services.AddAuthorization();
+
+// Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// -------------------- BUILD APP --------------------
+
 var app = builder.Build();
+
+// -------------------- SEED DATA (CORRECT WAY) --------------------
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DbSeeder.SeedAsync(context);
+}
+
+// -------------------- MIDDLEWARE --------------------
 
 if (app.Environment.IsDevelopment())
 {
@@ -33,6 +83,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();   // 🔥 IMPORTANT (JWT check)
+app.UseAuthorization();
 
 app.MapControllers();
 
