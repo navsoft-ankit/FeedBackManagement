@@ -15,7 +15,7 @@ public class FormService : IFormService
         _context = context;
     }
 
-    // ✅ CREATE FORM
+    //CREATE FORM
     public async Task<FormResponseDTO> CreateFormAsync(CreateFormDTO dto)
     {
         var form = new FeedbackForm
@@ -76,7 +76,7 @@ public class FormService : IFormService
         };
     }
 
-    // ✅ GET FORM
+    //GET FORM
     public async Task<FormResponseDTO> GetFormAsync(Guid id)
     {
         var form = await _context.FeedbackForms
@@ -102,7 +102,7 @@ public class FormService : IFormService
         };
     }
 
-    //Update Form
+    //UPDATE FORM
     public async Task<FormResponseDTO> UpdateFormAsync(Guid id, UpdateFormDTO dto)
     {
         var form = await _context.FeedbackForms.FindAsync(id);
@@ -117,8 +117,7 @@ public class FormService : IFormService
         return await GetFormAsync(id);
     }
 
-    //Delete Form
-
+    //DELETE FORM
     public async Task<bool> DeleteFormAsync(Guid id)
     {
         var form = await _context.FeedbackForms.FindAsync(id);
@@ -130,6 +129,4 @@ public class FormService : IFormService
 
         return true;
     }
-
-
 }
