@@ -1,4 +1,5 @@
 using Authservice.Models;
+using Authservice.DTOs.Form;
 using Authservice.Repository;
 
 namespace Authservice.Service
@@ -27,10 +28,10 @@ namespace Authservice.Service
             return await _feedbackRepository.GetFeedbacksByUserIdAsync(userId);
         }
 
-        public async Task AddFeedbackAsync(Feedback feedback)
-        {
-            await _feedbackRepository.AddFeedbackAsync(feedback);
-        }
+        // public async Task AddFeedbackAsync(Feedback feedback)
+        // {
+        //     await _feedbackRepository.AddFeedbackAsync(feedback);
+        // }
 
         public async Task UpdateFeedbackAsync(Feedback feedback)
         {
@@ -42,6 +43,30 @@ namespace Authservice.Service
             await _feedbackRepository.DeleteFeedbackAsync(id);
         }
 
-        
+        public async Task<bool> SubmitFeedbackAsync(SubmitFeedbackDTO dto)
+        {
+            var feedback = new Feedback
+            {
+                FormId = dto.FormId,
+                Name = dto.Name,
+                Email = dto.Email,
+                Designation = dto.Designation,
+                FinalNote = dto.FinalNote,
+                Answers = new List<Answer>()
+            };
+
+            foreach (var a in dto.Answers)
+            {
+                feedback.Answers.Add(new Answer
+                {
+                    QuestionId = a.QuestionId,
+                    Response = a.Response
+                });
+            }
+            await _feedbackRepository.AddFeedbackAsync(feedback);
+
+
+            return true;
+        }
     }
 }

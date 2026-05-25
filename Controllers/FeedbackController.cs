@@ -98,8 +98,6 @@ public class FeedbackController : ControllerBase
 
         _context.Feedbacks.Add(feedback);
         await _context.SaveChangesAsync();
-
-
         return Ok(new
         {
              Message = "Feedback submitted successfully",
