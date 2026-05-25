@@ -17,7 +17,7 @@ public class FeedbackController : ControllerBase
         _context = context;
     }
 
-    [HttpGet("form/{formId:guid}")]
+    [HttpGet("forms/{formId:guid}")]
     public async Task<IActionResult> GetFeedbackForForm(Guid formId)
     {
         var feedbacks = _context.Feedbacks
@@ -58,31 +58,22 @@ public class FeedbackController : ControllerBase
             }).FirstOrDefault();
         if (feedback == null) return NotFound();
 
-        return Ok(feedback);
-    }
-    [HttpPost]
-    public async Task<IActionResult> Submit(SubmitFeedbackDTO dto)
-    {
-        var feedback = new Feedback
+        // return Ok(feedback);
+        return Ok(new
         {
-            FormId = dto.FormId,
-            Name = dto.Name,
-            Email = dto.Email,
-            Designation = dto.Designation,
-            FinalNote = dto.FinalNote,
-            Answers = dto.Answers.Select(a => new Answer
+            feedback.Id,
+            feedback.Name,
+            feedback.Email,
+            feedback.Designation,
+            feedback.FinalNote,
+            Answers = feedback.Answers.Select(a => new
             {
-                QuestionId = a.QuestionId,
-                Response = a.Response
+                a.QuestionId,
+                a.Response
             }).ToList()
-        };
-
-        _context.Feedbacks.Add(feedback);
-        await _context.SaveChangesAsync();
-
-        return Ok("Feedback submitted");
+        });
     }
-    [HttpPost("submit")]
+    [HttpPost("Submit")]
     public async Task<IActionResult> SubmitFeedback([FromBody] SubmitFeedbackDTO dto)
     {
         var alreadySubmitted = await _context.Feedbacks
@@ -104,8 +95,15 @@ public class FeedbackController : ControllerBase
                 Response = a.Response
             }).ToList()
         };
+
         _context.Feedbacks.Add(feedback);
         await _context.SaveChangesAsync();
-        return Ok("Feedback submitted successfully");
+
+
+        return Ok(new
+        {
+             Message = "Feedback submitted successfully",
+             FeedbackId = feedback.Id
+        });
     }
 }
