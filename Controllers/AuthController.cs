@@ -20,7 +20,7 @@ namespace Authservice.Controllers
             _jwtService = jwtService;
         }
 
-       [HttpPost("register")]
+        [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
             var existingUser = await _userService.GetUserByEmailAsync(registerDTO.Email);

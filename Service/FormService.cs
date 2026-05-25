@@ -21,7 +21,8 @@ public class FormService : IFormService
         var form = new FeedbackForm
         {
             Title = dto.Title,
-            Description = dto.Description
+            Description = dto.Description,
+
         };
 
         _context.FeedbackForms.Add(form);
@@ -34,7 +35,8 @@ public class FormService : IFormService
             {
                 Text = q.Text,
                 Type = q.Type,
-                FormId = form.Id
+                FormId = form.Id,
+                Note = q.Note
             };
 
             _context.Questions.Add(question);
@@ -61,7 +63,8 @@ public class FormService : IFormService
                 Id = question.Id.ToString(),
                 Text = question.Text,
                 Type = question.Type.ToString(),
-                Options = optionsList
+                Options = optionsList,
+                Note = question.Note
             });
         }
 
@@ -77,7 +80,7 @@ public class FormService : IFormService
     }
 
     //GET FORM
-    public async Task<FormResponseDTO> GetFormAsync(Guid id)
+    public async Task<FormResponseDTO?> GetFormAsync(Guid id)
     {
         var form = await _context.FeedbackForms
             .Include(f => f.Questions)
@@ -97,64 +100,81 @@ public class FormService : IFormService
                 Id = q.Id.ToString(),
                 Text = q.Text,
                 Type = q.Type.ToString(),
-                Options = q.Options.Select(o => o.Value).ToList()
+                Options = q.Options.Select(o => o.Value).ToList(),
+                Note = q.Note
             }).ToList()
         };
     }
 
     //UPDATE FORM
     public async Task<FormResponseDTO> UpdateFormAsync(Guid id, UpdateFormDTO dto)
-{
-    var form = await _context.FeedbackForms
-        .Include(f => f.Questions)
-        .ThenInclude(q => q.Options)
-        .FirstOrDefaultAsync(f => f.Id == id);
-
-    if (form == null)
-        return null;
-
-    form.Title = dto.Title;
-    form.Description = dto.Description;
-
-    foreach (var dtoQ in dto.Questions)
     {
-        var existingQ = form.Questions
-            .FirstOrDefault(q => q.Id.ToString() == dtoQ.Id);
+        var form = await _context.FeedbackForms
+            .Include(f => f.Questions)
+            .ThenInclude(q => q.Options)
+            .FirstOrDefaultAsync(f => f.Id == id);
 
-        if (existingQ != null)
+        if (form == null)
+            return null;
+
+        form.Title = dto.Title;
+        form.Description = dto.Description;
+
+        foreach (var dtoQ in dto.Questions)
         {
-            existingQ.Text = dtoQ.Text;
+            var existingQ = form.Questions
+                .FirstOrDefault(q => q.Id.ToString() == dtoQ.Id.ToString());
 
-            existingQ.Type =
-                Enum.TryParse<QuestionType>(dtoQ.Type, true, out var type)
-                    ? type
-                    : QuestionType.Text;
-
-            // 🔥 IMPORTANT: replace entire collection
-             var oldOptions = _context.Options
-                .Where(o => o.QuestionId == existingQ.Id);
-
-            _context.Options.RemoveRange(oldOptions);
-
-            await _context.SaveChangesAsync();
-
-            if (dtoQ.Options != null)
+            if (existingQ != null)
             {
-                var newOptions = dtoQ.Options.Select(o => new Option
+                existingQ.Text = dtoQ.Text;
+                existingQ.Type = dtoQ.Type;   // ✔️ FIX
+                existingQ.Note = dtoQ.Note;
+
+                _context.Options.RemoveRange(existingQ.Options);
+
+                existingQ.Options = dtoQ.Options?.Select(o => new Option
                 {
                     Value = o,
-                    QuestionId = existingQ.Id
-                });
+                    QuestionId = existingQ.Id   // ✔️ IMPORTANT FIX
+                }).ToList();
+            }
+            else
+            {
+                var newQuestion = new Question
+                {
+                    Text = dtoQ.Text,
+                    Type = dtoQ.Type,   // ✔️ FIX
+                    Note = dtoQ.Note,
+                    FormId = form.Id,
 
-                _context.Options.AddRange(newOptions);
+                    Options = dtoQ.Options?.Select(o => new Option
+                    {
+                        Value = o
+                    }).ToList()
+                };
+
+                form.Questions.Add(newQuestion);
             }
         }
+
+        await _context.SaveChangesAsync();
+
+        return new FormResponseDTO
+        {
+            Id = form.Id,
+            Title = form.Title,
+            Description = form.Description,
+            Questions = form.Questions.Select(q => new QuestionDTO
+            {
+                Id = q.Id.ToString(),
+                Text = q.Text,
+                Type = q.Type.ToString(),
+                Options = q.Options.Select(o => o.Value).ToList(),
+                Note = q.Note
+            }).ToList()
+        };
     }
-
-    await _context.SaveChangesAsync();
-
-    return await GetFormAsync(id);
-}
     //DELETE FORM
     public async Task<bool> DeleteFormAsync(Guid id)
     {
@@ -170,29 +190,29 @@ public class FormService : IFormService
 
     public async Task<bool> SubmitFeedbackAsync(SubmitFeedbackDTO dto)
     {
-    var feedback = new Feedback
-    {
-        FormId = dto.FormId,
-        Name = dto.Name,
-        Email = dto.Email,
-        Designation = dto.Designation,
-        FinalNote = dto.FinalNote,
-        Answers = new List<Answer>()
-    };
-
-    foreach (var a in dto.Answers)
-    {
-        feedback.Answers.Add(new Answer
+        var feedback = new Feedback
         {
-            QuestionId = a.QuestionId,
-            Response = a.Response
-        });
-    }
+            FormId = dto.FormId,
+            Name = dto.Name,
+            Email = dto.Email,
+            Designation = dto.Designation,
+            FinalNote = dto.FinalNote,
+            Answers = new List<Answer>()
+        };
 
-    _context.Feedbacks.Add(feedback);
-    await _context.SaveChangesAsync();
+        foreach (var a in dto.Answers)
+        {
+            feedback.Answers.Add(new Answer
+            {
+                QuestionId = a.QuestionId,
+                Response = a.Response
+            });
+        }
 
-    return true;
+        _context.Feedbacks.Add(feedback);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 
 }
