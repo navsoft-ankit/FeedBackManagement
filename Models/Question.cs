@@ -13,4 +13,5 @@ public class Question
     public List<Option> Options { get; set; }
 
     public string? Note { get; set; }
+    public string? MetadataJson {get; set;}
 }

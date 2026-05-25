@@ -7,4 +7,5 @@ public class Answer
    public string Response { get; set; }
    public Guid FeedbackId { get; set; }
    public Feedback Feedback { get; set; }
+   public string? MetadataJson {get; set;}
 }

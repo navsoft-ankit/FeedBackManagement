@@ -10,4 +10,5 @@ public class CreateQuestionDTO
     public List<string>? Options { get; set; }
 
     public string? Note { get; set; }
+    public string? MetadataJson {get; set;}
 }
