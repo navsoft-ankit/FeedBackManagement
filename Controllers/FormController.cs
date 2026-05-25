@@ -9,13 +9,12 @@ namespace Authservice.Controllers;
 public class FormController : ControllerBase
 {
     private readonly IFormService _service;
-
     public FormController(IFormService service)
     {
         _service = service;
     }
 
-   [HttpPost("create")]
+    [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] CreateFormDTO dto)
     {
         var result = await _service.CreateFormAsync(dto);
@@ -34,6 +33,7 @@ public class FormController : ControllerBase
         var result = await _service.UpdateFormAsync(id, dto);
         return Ok(result);
     }
+    
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
