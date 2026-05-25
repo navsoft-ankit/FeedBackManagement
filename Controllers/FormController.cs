@@ -41,15 +41,4 @@ public class FormController : ControllerBase
         var result = await _service.DeleteFormAsync(id);
         return Ok(result);
     }
-
-    [HttpPost("submit")]
-    public async Task<IActionResult> SubmitFeedback(SubmitFeedbackDTO dto)
-    {
-        var result = await _service.SubmitFeedbackAsync(dto);
-        return Ok(new
-        {
-            success = true,
-            message = "Feedback submitted successfully"
-        });
-    }
 }

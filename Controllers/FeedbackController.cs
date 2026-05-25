@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Authservice.DTOs.Form;
 using Authservice.Data;
 using Authservice.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Authservice.Controllers;
 
@@ -16,6 +17,50 @@ public class FeedbackController : ControllerBase
         _context = context;
     }
 
+    [HttpGet("form/{formId:guid}")]
+    public async Task<IActionResult> GetFeedbackForForm(Guid formId)
+    {
+        var feedbacks = _context.Feedbacks
+            .Where(f => f.FormId == formId)
+            .Select(f => new
+            {
+                f.Id,
+                f.Name,
+                f.Email,
+                f.Designation,
+                f.FinalNote,
+                Answers = f.Answers.Select(a => new
+                {
+                    a.QuestionId,
+                    a.Response
+                }).ToList()
+            }).ToList();
+
+        return Ok(feedbacks);
+    }
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetFeedback(Guid id)
+    {
+        var feedback = _context.Feedbacks
+            .Where(f => f.Id == id)
+            .Select(f => new
+            {
+                f.Id,
+                f.Name,
+                f.Email,
+                f.Designation,
+                f.FinalNote,
+                Answers = f.Answers.Select(a => new
+                {
+                    a.QuestionId,
+                    a.Response
+                }).ToList()
+            }).FirstOrDefault();
+
+        if (feedback == null) return NotFound();
+
+        return Ok(feedback);
+    }
     [HttpPost]
     public async Task<IActionResult> Submit(SubmitFeedbackDTO dto)
     {
@@ -37,5 +82,31 @@ public class FeedbackController : ControllerBase
         await _context.SaveChangesAsync();
 
         return Ok("Feedback submitted");
+    }
+    [HttpPost("submit")]
+    public async Task<IActionResult> SubmitFeedback([FromBody] SubmitFeedbackDTO dto)
+    {
+        var alreadySubmitted = await _context.Feedbacks
+            .AnyAsync(f => f.FormId == dto.FormId && f.Email == dto.Email);
+        if (alreadySubmitted)
+        {
+            return BadRequest("Feedback already submitted for this form with the same email.");
+        }
+        var feedback = new Feedback
+        {
+            FormId = dto.FormId,
+            Name = dto.Name,
+            Email = dto.Email,
+            Designation = dto.Designation,
+            FinalNote = dto.FinalNote,
+            Answers = dto.Answers.Select(a => new Answer
+            {
+                QuestionId = a.QuestionId,
+                Response = a.Response
+            }).ToList()
+        };
+        _context.Feedbacks.Add(feedback);
+        await _context.SaveChangesAsync();
+        return Ok("Feedback submitted successfully");
     }
 }
