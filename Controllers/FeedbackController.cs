@@ -49,14 +49,13 @@ public class FeedbackController : ControllerBase
                 f.Name,
                 f.Email,
                 f.Designation,
-                f.FinalNote,
                 Answers = f.Answers.Select(a => new
                 {
                     a.QuestionId,
                     a.Response
-                }).ToList()
+                }).ToList(),
+                f.FinalNote
             }).FirstOrDefault();
-
         if (feedback == null) return NotFound();
 
         return Ok(feedback);
