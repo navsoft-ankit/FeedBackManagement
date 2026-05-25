@@ -8,5 +8,5 @@ public class CreateQuestionDTO
     public QuestionType Type { get; set; }
     public List<string>? Options { get; set; }
 
-       public string? Note { get; set; }
+    public string? Note { get; set; }
 }
