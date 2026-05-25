@@ -78,7 +78,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    await DbSeeder.SeedAsync(context);
+    // await DbSeeder.SeedAsync(context);
 }
 
 // -------------------- MIDDLEWARE --------------------

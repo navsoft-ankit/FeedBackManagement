@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Authservice.DTOs;
 using Authservice.Models;
 using Authservice.Service;
+using Microsoft.AspNetCore.Authorization;
 using System.Reflection.Metadata.Ecma335;
 
 
@@ -42,8 +43,7 @@ namespace Authservice.Controllers
 
             return Ok("User registered successfully.");
         }
-
-        [HttpPost("login")]
+            [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var user = await _userService.GetUserByEmailAsync(loginDTO.Email);

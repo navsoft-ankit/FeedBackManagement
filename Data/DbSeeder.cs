@@ -5,13 +5,21 @@ public class DbSeeder
     {
         if (!context.Users.Any())
         {
-            context.Users.Add(new User
+            context.Users.AddRange(new User
             {
-                Name = "Admin",
-                Email = "Admin@example.com",
-                Password = "Admin123",
+                Name = "Admin1",
+                Email = "Admin1@example.com",
+                Password = "Admin1123",
                 Role = "Admin"
-            });
+            },
+            new User
+            {
+                Name = "Admin2",
+                Email = "Admin2@example.com",
+                Password = "Admin2123",
+                Role = "Admin"
+            }
+            ); 
             await context.SaveChangesAsync();
         }
     }
