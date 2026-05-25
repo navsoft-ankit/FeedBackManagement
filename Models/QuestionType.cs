@@ -4,5 +4,6 @@ public enum QuestionType
 {
     MCQ,
     Dropdown,
-    Text
+    Text,
+    FinalFeedback 
 }

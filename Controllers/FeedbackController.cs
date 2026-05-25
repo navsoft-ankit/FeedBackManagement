@@ -29,8 +29,7 @@ public class FeedbackController : ControllerBase
             Answers = dto.Answers.Select(a => new Answer
             {
                 QuestionId = a.QuestionId,
-                OptionId = a.OptionId,
-                TextValue = a.TextValue
+                Response = a.Response
             }).ToList()
         };
 

@@ -12,4 +12,7 @@ public interface IFormService
 
     Task<bool> DeleteFormAsync(Guid id);
 
+    Task<bool> SubmitFeedbackAsync(SubmitFeedbackDTO dto);
+    
+
 }

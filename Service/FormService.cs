@@ -58,7 +58,7 @@ public class FormService : IFormService
 
             questionsDto.Add(new QuestionDTO
             {
-                Id = question.Id,
+                Id = question.Id.ToString(),
                 Text = question.Text,
                 Type = question.Type.ToString(),
                 Options = optionsList
@@ -94,7 +94,7 @@ public class FormService : IFormService
             Description = form.Description,
             Questions = form.Questions.Select(q => new QuestionDTO
             {
-                Id = q.Id,
+                Id = q.Id.ToString(),
                 Text = q.Text,
                 Type = q.Type.ToString(),
                 Options = q.Options.Select(o => o.Value).ToList()
@@ -104,19 +104,57 @@ public class FormService : IFormService
 
     //UPDATE FORM
     public async Task<FormResponseDTO> UpdateFormAsync(Guid id, UpdateFormDTO dto)
+{
+    var form = await _context.FeedbackForms
+        .Include(f => f.Questions)
+        .ThenInclude(q => q.Options)
+        .FirstOrDefaultAsync(f => f.Id == id);
+
+    if (form == null)
+        return null;
+
+    form.Title = dto.Title;
+    form.Description = dto.Description;
+
+    foreach (var dtoQ in dto.Questions)
     {
-        var form = await _context.FeedbackForms.FindAsync(id);
+        var existingQ = form.Questions
+            .FirstOrDefault(q => q.Id.ToString() == dtoQ.Id);
 
-        if (form == null) return null;
+        if (existingQ != null)
+        {
+            existingQ.Text = dtoQ.Text;
 
-        form.Title = dto.Title;
-        form.Description = dto.Description;
+            existingQ.Type =
+                Enum.TryParse<QuestionType>(dtoQ.Type, true, out var type)
+                    ? type
+                    : QuestionType.Text;
 
-        await _context.SaveChangesAsync();
+            // 🔥 IMPORTANT: replace entire collection
+             var oldOptions = _context.Options
+                .Where(o => o.QuestionId == existingQ.Id);
 
-        return await GetFormAsync(id);
+            _context.Options.RemoveRange(oldOptions);
+
+            await _context.SaveChangesAsync();
+
+            if (dtoQ.Options != null)
+            {
+                var newOptions = dtoQ.Options.Select(o => new Option
+                {
+                    Value = o,
+                    QuestionId = existingQ.Id
+                });
+
+                _context.Options.AddRange(newOptions);
+            }
+        }
     }
 
+    await _context.SaveChangesAsync();
+
+    return await GetFormAsync(id);
+}
     //DELETE FORM
     public async Task<bool> DeleteFormAsync(Guid id)
     {
@@ -129,4 +167,32 @@ public class FormService : IFormService
 
         return true;
     }
+
+    public async Task<bool> SubmitFeedbackAsync(SubmitFeedbackDTO dto)
+    {
+    var feedback = new Feedback
+    {
+        FormId = dto.FormId,
+        Name = dto.Name,
+        Email = dto.Email,
+        Designation = dto.Designation,
+        FinalNote = dto.FinalNote,
+        Answers = new List<Answer>()
+    };
+
+    foreach (var a in dto.Answers)
+    {
+        feedback.Answers.Add(new Answer
+        {
+            QuestionId = a.QuestionId,
+            Response = a.Response
+        });
+    }
+
+    _context.Feedbacks.Add(feedback);
+    await _context.SaveChangesAsync();
+
+    return true;
+    }
+
 }

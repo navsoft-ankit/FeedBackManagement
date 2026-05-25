@@ -15,8 +15,8 @@ public class FormController : ControllerBase
         _service = service;
     }
 
-    [HttpPost("create")]
-    public async Task<IActionResult> Create(CreateFormDTO dto)
+   [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] CreateFormDTO dto)
     {
         var result = await _service.CreateFormAsync(dto);
         return Ok(result);
@@ -29,12 +29,11 @@ public class FormController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateForm(Guid id, UpdateFormDTO dto)
+    public async Task<IActionResult> Update(Guid id, [FromBody] UpdateFormDTO dto)
     {
         var result = await _service.UpdateFormAsync(id, dto);
         return Ok(result);
     }
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -43,5 +42,14 @@ public class FormController : ControllerBase
         return Ok(result);
     }
 
-
+    [HttpPost("submit")]
+    public async Task<IActionResult> SubmitFeedback(SubmitFeedbackDTO dto)
+    {
+        var result = await _service.SubmitFeedbackAsync(dto);
+        return Ok(new
+        {
+            success = true,
+            message = "Feedback submitted successfully"
+        });
+    }
 }
