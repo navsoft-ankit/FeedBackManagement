@@ -6,7 +6,6 @@ public interface IFeedbackService
     Task<Feedback> GetFeedbackByIdAsync(Guid id);
 
     Task<List<Feedback>> GetFeedbacksByUserIdAsync(Guid userId);
-
     Task AddFeedbackAsync(Feedback feedback);
 
     Task UpdateFeedbackAsync(Feedback feedback);

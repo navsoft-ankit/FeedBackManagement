@@ -21,27 +21,27 @@ namespace Authservice.Controllers
         }
 
        [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
-    {
-        var existingUser = await _userService.GetUserByEmailAsync(registerDTO.Email);
-
-        if (existingUser != null)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
-            return BadRequest("User already exists with this email.");
+            var existingUser = await _userService.GetUserByEmailAsync(registerDTO.Email);
+
+            if (existingUser != null)
+            {
+                return BadRequest("Account already exists with this email.");
+            }
+
+            var user = new User
+            {
+                Name = registerDTO.Name,
+                Email = registerDTO.Email,
+                Password = registerDTO.Password,
+                Role = "User"
+            };
+
+            await _userService.AddUserAsync(user);
+
+            return Ok("User registered successfully.");
         }
-
-        var user = new User
-        {
-            Name = registerDTO.Name,
-            Email = registerDTO.Email,
-            Password = registerDTO.Password,
-            Role = "User"
-        };
-
-        await _userService.AddUserAsync(user);
-
-        return Ok("User registered successfully.");
-    }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)

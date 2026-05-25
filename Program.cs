@@ -62,7 +62,7 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-    
+
 builder.Services.AddAuthorization();
 
 // Swagger
@@ -91,7 +91,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();   // 🔥 IMPORTANT (JWT check)
+app.UseAuthentication();   //IMPORTANT (JWT check)
 app.UseAuthorization();
 
 app.MapControllers();
