@@ -36,7 +36,7 @@ namespace Authservice.Controllers
                 Name = registerDTO.Name,
                 Email = registerDTO.Email,
                 Password = registerDTO.Password,
-                Role = "User"
+                  Role = registerDTO.Role ?? "User"
             };
 
             await _userService.AddUserAsync(user);
@@ -56,7 +56,7 @@ namespace Authservice.Controllers
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
 
-            await _userService.UpdateUserAsync(user); 
+            await _userService.UpdateUserAsync(user);
             return Ok(
                 new
                 {
