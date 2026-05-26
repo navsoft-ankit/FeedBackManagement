@@ -43,7 +43,7 @@ namespace Authservice.Controllers
 
             return Ok("User registered successfully.");
         }
-            [HttpPost("login")]
+        [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var user = await _userService.GetUserByEmailAsync(loginDTO.Email);
@@ -52,61 +52,89 @@ namespace Authservice.Controllers
                 return Unauthorized("Invalid email or password.");
 
             var token = _jwtService.GenerateToken(user);
+            var refreshToken = Guid.NewGuid().ToString();
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+            await _userService.UpdateUserAsync(user); 
             return Ok(
                 new
                 {
                     Message = $"{user.Role} logged in successfully",
                     Role = user.Role,
-                    Token = token
+                    Token = token,
+                    RefreshToken = refreshToken
                 }
             );
         }
 
-       [HttpPost("forgot-password")]
-public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
-{
-    var user = await _userService.GetUserByEmailAsync(dto.Email);
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+        {
+            var user = await _userService.GetUserByEmailAsync(dto.Email);
 
-    if (user == null)
-        return BadRequest("User not found.");
+            if (user == null)
+                return BadRequest("User not found.");
 
-    // 1. generate token
-    var token = Guid.NewGuid().ToString();
+            // 1. generate token
+            var token = Guid.NewGuid().ToString();
 
-    // 2. save token with expiry (DB or cache)
-    user.ResetToken = token;
-    user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(30);
+            // 2. save token with expiry (DB or cache)
+            user.ResetToken = token;
+            user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(30);
 
-    await _userService.UpdateUserAsync(user);
+            await _userService.UpdateUserAsync(user);
 
-    // 3. create reset link
-    var resetLink = $"https://yourfrontend.com/reset-password?token={token}&email={user.Email}";
+            // 3. create reset link
+            var resetLink = $"https://yourfrontend.com/reset-password?token={token}&email={user.Email}";
 
-    // 4. send email (এখানে mock)
-    return Ok(new { message = "Reset link generated", link = resetLink });
-}
-[HttpPost("reset-password")]
-public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
-{
-    var user = await _userService.GetUserByEmailAsync(dto.Email);
+            // 4. send email (এখানে mock)
+            return Ok(new { message = "Reset link generated", link = resetLink });
+        }
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+        {
+            var user = await _userService.GetUserByEmailAsync(dto.Email);
 
-    if (user == null)
-        return BadRequest("User not found.");
+            if (user == null)
+                return BadRequest("User not found.");
 
-    // check token
-    if (user.ResetToken != dto.Token || user.ResetTokenExpiry < DateTime.UtcNow)
-        return BadRequest("Invalid or expired token.");
+            // check token
+            if (user.ResetToken != dto.Token || user.ResetTokenExpiry < DateTime.UtcNow)
+                return BadRequest("Invalid or expired token.");
 
-    // set new password
-    user.Password = dto.NewPassword;
+            // set new password
+            user.Password = dto.NewPassword;
 
-    // clear token
-    user.ResetToken = null;
-    user.ResetTokenExpiry = null;
+            // clear token
+            user.ResetToken = null;
+            user.ResetTokenExpiry = null;
 
-    await _userService.UpdateUserAsync(user);
+            await _userService.UpdateUserAsync(user);
 
-    return Ok("Password reset successful.");
-}
+            return Ok("Password reset successful.");
+        }
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] LoginResponseDTO dto)
+        {
+            var user = await _userService.GetUserByRefreshTokenAsync(dto.RefreshToken);
+
+            if (user == null || user.RefreshTokenExpiryTime < DateTime.UtcNow)
+                return Unauthorized("Invalid or expired refresh token.");
+
+            var newToken = _jwtService.GenerateToken(user);
+            var newRefreshToken = Guid.NewGuid().ToString();
+
+            user.RefreshToken = newRefreshToken;
+            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
+
+            await _userService.UpdateUserAsync(user);
+
+            return Ok(new
+            {
+                Token = newToken,
+                RefreshToken = newRefreshToken
+            });
+        }
     }
 }

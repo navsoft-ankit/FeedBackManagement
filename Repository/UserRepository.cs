@@ -47,5 +47,10 @@ namespace Authservice.Repository
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _context.Users
+                .FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+        }
     }
 }

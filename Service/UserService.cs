@@ -42,5 +42,9 @@ namespace Authservice.Service
         {
             await _userRepository.DeleteUserAsync(id);
         }
+        public async Task<User> GetUserByRefreshTokenAsync(string refreshToken)
+        {
+            return await _userRepository.GetUserByRefreshTokenAsync(refreshToken);
+        }
     }
 }
