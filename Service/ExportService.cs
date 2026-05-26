@@ -23,6 +23,7 @@ namespace Authservice.Service
                 request.FromDate,
                 request.ToDate
             );
+            Console.WriteLine("Data count: " + data.Count);
 
             return request.Format switch
 {
@@ -45,7 +46,6 @@ namespace Authservice.Service
 
             csv.WriteField("Question");
             csv.WriteField("Answer");
-            csv.WriteField("Feedback");
             csv.WriteField("Date");
             csv.NextRecord();
 
@@ -59,6 +59,7 @@ namespace Authservice.Service
             }
 
             writer.Flush();
+            memoryStream.Position = 0;
 
             return (
                 memoryStream.ToArray(),

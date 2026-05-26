@@ -57,8 +57,7 @@ namespace Authservice.Repository
         {
             return await _context.Answers
                 .Include(a => a.Question) // include question text
-                .Include(a => a.Feedback) // include feedback for email, etc if needed
-                .Where(a => a.CreatedAt >= fromDate && a.CreatedAt <= toDate)
+                .Where(a => a.CreatedAt >= fromDate && a.CreatedAt <= toDate.AddDays(1)) // include entire end date
                 .ToListAsync();
         }
     }
