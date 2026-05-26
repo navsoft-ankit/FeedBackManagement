@@ -52,6 +52,7 @@ namespace Authservice.Service
                 Email = dto.Email,
                 Designation = dto.Designation,
                 FinalNote = dto.FinalNote,
+                // Title = dto.Title,
                 Answers = new List<Answer>()
             };
 
@@ -60,9 +61,11 @@ namespace Authservice.Service
                 feedback.Answers.Add(new Answer
                 {
                     QuestionId = a.QuestionId,
-                    Response = a.Response
+                    Response = a.Response,
+                    Feedback = feedback   // 🔥 IMPORTANT FIX
                 });
             }
+
             await _feedbackRepository.AddFeedbackAsync(feedback);
 
             return true;

@@ -9,5 +9,6 @@ public class SubmitFeedbackDTO
     public string Email { get; set; }
     public string Designation { get; set; }
     public string FinalNote { get; set; }
+    // public string Title { get; set; }
     
 }

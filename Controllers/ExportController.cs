@@ -1,6 +1,7 @@
 using Authservice.DTOs.Export;
 using Authservice.Service;
 using Microsoft.AspNetCore.Mvc;
+using Authservice.Models;
 
 namespace Authservice.Controllers
 {
@@ -20,6 +21,11 @@ namespace Authservice.Controllers
         {
             if (request == null)
                 return BadRequest("Request body is empty");
+
+            if (!Enum.IsDefined(typeof(Authservice.Models.ExportFormat), request.Format))
+            {
+                return BadRequest("Invalid export format");
+            }
 
             var result = await _exportService.ExportFeedbackAsync(request);
 

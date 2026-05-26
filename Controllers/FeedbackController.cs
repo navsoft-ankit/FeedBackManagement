@@ -55,7 +55,7 @@ public class FeedbackController : ControllerBase
 
     // 🔐 ADMIN ONLY: view all feedback for a form
     [Authorize]
-    [HttpGet("forms/{formId:guid}")]
+    [HttpGet("forms/{feedbackId:guid}")]
     public async Task<IActionResult> GetFeedbackForForm(Guid formId)
     {
         var feedbacks = await _context.Feedbacks

@@ -24,7 +24,13 @@ namespace Authservice.Service
                 request.ToDate
             );
 
-            return GenerateCsv(data);
+            return request.Format switch
+{
+        ExportFormat.CSV => GenerateCsv(data),
+        ExportFormat.Excel => throw new NotImplementedException(),
+        ExportFormat.Pdf => throw new NotImplementedException(),
+        _ => GenerateCsv(data)
+};
         }
 
         // ================= CSV ONLY =================
@@ -47,7 +53,7 @@ namespace Authservice.Service
             {
                 csv.WriteField(item.Question?.Text);
                 csv.WriteField(item.Response);
-                csv.WriteField(item.Feedback?.title + " - " + item.Feedback?.FinalNote);
+                // csv.WriteField(item.Feedback?.Title + " - " + item.Feedback?.FinalNote);
                 csv.WriteField(item.CreatedAt.ToString("yyyy-MM-dd"));
                 csv.NextRecord();
             }
