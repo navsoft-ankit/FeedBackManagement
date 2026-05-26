@@ -11,7 +11,6 @@ public class JwtService : IJwtService
     {
         _config = config;
     }
-
     public string GenerateToken(User user)
     {
         var claims = new[]

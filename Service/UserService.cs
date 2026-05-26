@@ -17,9 +17,10 @@ namespace Authservice.Service
             return await _userRepository.GetAllUsersAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(Guid id)
+        public async Task<List<User>> GetUserByIdAsync(Guid id)
         {
-            return await _userRepository.GetUserByIdAsync(id);
+            var user = await _userRepository.GetUserByIdAsync(id);
+            return user != null ? new List<User> { user } : new List<User>();
         }
 
         public async Task<User> GetUserByEmailAsync(string email)

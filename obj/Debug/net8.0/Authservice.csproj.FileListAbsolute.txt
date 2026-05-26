@@ -15,6 +15,7 @@
 /home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/Authservice.pdb
 /home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/Azure.Core.dll
 /home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/Azure.Identity.dll
+/home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/CsvHelper.dll
 /home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/EPPlus.dll
 /home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/EPPlus.Interfaces.dll
 /home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/Humanizer.dll
@@ -161,4 +162,3 @@
 /home/nav114/Feedback Management System/src/Authservice/obj/Debug/net8.0/Authservice.pdb
 /home/nav114/Feedback Management System/src/Authservice/obj/Debug/net8.0/Authservice.genruntimeconfig.cache
 /home/nav114/Feedback Management System/src/Authservice/obj/Debug/net8.0/ref/Authservice.dll
-/home/nav114/Feedback Management System/src/Authservice/bin/Debug/net8.0/CsvHelper.dll

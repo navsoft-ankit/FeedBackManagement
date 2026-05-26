@@ -26,12 +26,12 @@ namespace Authservice.Service
             Console.WriteLine("Data count: " + data.Count);
 
             return request.Format switch
-{
-        ExportFormat.CSV => GenerateCsv(data),
-        ExportFormat.Excel => throw new NotImplementedException(),
-        ExportFormat.Pdf => throw new NotImplementedException(),
-        _ => GenerateCsv(data)
-};
+            {
+                ExportFormat.CSV => GenerateCsv(data),
+                ExportFormat.Excel => throw new NotImplementedException(),
+                ExportFormat.Pdf => throw new NotImplementedException(),
+                _ => GenerateCsv(data)
+            };
         }
 
         // ================= CSV ONLY =================
