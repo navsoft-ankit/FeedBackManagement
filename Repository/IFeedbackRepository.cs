@@ -8,9 +8,5 @@ public interface IFeedbackRepository
     Task AddFeedbackAsync(Feedback feedback);
     Task UpdateFeedbackAsync(Feedback feedback);
     Task DeleteFeedbackAsync(Guid id);
-    Task<List<Answer>> GetAnswerByDateAsync
-    (
-        DateTime fromDate,
-        DateTime toDate
-    );
+    Task<List<Answer>> GetAnswersByDateAsync(DateTime fromDate, DateTime toDate);
 }

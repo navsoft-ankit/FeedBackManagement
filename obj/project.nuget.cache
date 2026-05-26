@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "5a+qsBBSNVA=",
+  "dgSpecHash": "bRvgZ02H0Yw=",
   "success": true,
   "projectFilePath": "/home/nav114/Feedback Management System/src/Authservice/Authservice.csproj",
   "expectedPackageFiles": [
     "/home/nav114/.nuget/packages/azure.core/1.25.0/azure.core.1.25.0.nupkg.sha512",
     "/home/nav114/.nuget/packages/azure.identity/1.7.0/azure.identity.1.7.0.nupkg.sha512",
+    "/home/nav114/.nuget/packages/csvhelper/18.0.0/csvhelper.18.0.0.nupkg.sha512",
     "/home/nav114/.nuget/packages/epplus/8.5.4/epplus.8.5.4.nupkg.sha512",
     "/home/nav114/.nuget/packages/epplus.interfaces/8.4.0/epplus.interfaces.8.4.0.nupkg.sha512",
     "/home/nav114/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
@@ -19,6 +20,7 @@
     "/home/nav114/.nuget/packages/microsoft.codeanalysis.csharp/4.5.0/microsoft.codeanalysis.csharp.4.5.0.nupkg.sha512",
     "/home/nav114/.nuget/packages/microsoft.codeanalysis.csharp.workspaces/4.5.0/microsoft.codeanalysis.csharp.workspaces.4.5.0.nupkg.sha512",
     "/home/nav114/.nuget/packages/microsoft.codeanalysis.workspaces.common/4.5.0/microsoft.codeanalysis.workspaces.common.4.5.0.nupkg.sha512",
+    "/home/nav114/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",
     "/home/nav114/.nuget/packages/microsoft.data.sqlclient/5.1.1/microsoft.data.sqlclient.5.1.1.nupkg.sha512",
     "/home/nav114/.nuget/packages/microsoft.data.sqlclient.sni.runtime/5.1.0/microsoft.data.sqlclient.sni.runtime.5.1.0.nupkg.sha512",
     "/home/nav114/.nuget/packages/microsoft.dotnet.platformabstractions/1.1.0/microsoft.dotnet.platformabstractions.1.1.0.nupkg.sha512",

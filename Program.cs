@@ -11,9 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-// -------------------- SERVICES --------------------
-
-builder.Services.AddControllers();
 
 // 🔥 JWT SERVICE (IMPORTANT)
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -22,6 +19,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 builder.Services.AddScoped<IFormService, FormService>();
+builder.Services.AddScoped<IExportService, ExportService>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -93,6 +91,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 app.UseAuthentication();   //IMPORTANT (JWT check)
 app.UseAuthorization();
 

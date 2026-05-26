@@ -1,109 +1,64 @@
-// using System.Text;
-// using Authservice.DTOs.Export;
-// using Authservice.Repository;
-// using OfficeOpenXml;
-// using Authservice.Models;
+using System.Globalization;
+using System.Text;
+using Authservice.DTOs.Export;
+using Authservice.Repository;
+using Authservice.Models;
+using CsvHelper;
 
-// namespace Authservice.Service
-// {
-//     public class ExportService : IExportService
-//     {
-//         private readonly IFeedbackRepository _feedbackRepository;
+namespace Authservice.Service
+{
+    public class ExportService : IExportService
+    {
+        private readonly IFeedbackRepository _feedbackRepository;
 
-//         public ExportService(IFeedbackRepository feedbackRepository)
-//         {
-//             _feedbackRepository = feedbackRepository;
-//         }
+        public ExportService(IFeedbackRepository feedbackRepository)
+        {
+            _feedbackRepository = feedbackRepository;
+        }
 
-//         public async Task<(byte[] fileContent,
-//                            string contentType,
-//                            string fileName)>
-//             ExportFeedbackAsync(ExportDTO request)
-//         {
-//             var data = await _feedbackRepository
-//                 .GetAnswersByDateAsync(
-//                     request.FromDate,
-//                     request.ToDate
-//                 );
+        public async Task<(byte[] fileContent, string contentType, string fileName)>
+            ExportFeedbackAsync(ExportDTO request)
+        {
+            var data = await _feedbackRepository.GetAnswersByDateAsync(
+                request.FromDate,
+                request.ToDate
+            );
 
-//             switch (request.format.ToLower())
-//             {
-//                 case "excel":
-//                     return GenerateExcel(data);
+            return GenerateCsv(data);
+        }
 
-//                 case "csv":
-//                     return GenerateCsv(data);
+        // ================= CSV ONLY =================
 
-//                 default:
-//                     throw new Exception("Invalid format");
-//             }
-//         }
+        private (byte[], string, string) GenerateCsv(List<Answer> data)
+        {
+            using var memoryStream = new MemoryStream();
+            using var writer = new StreamWriter(memoryStream);
+            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-//         // ================= EXCEL =================
+            // optional: better column control
 
-//         private (byte[], string, string)
-//             GenerateExcel(List<Models.Answer> data)
-//         {
-//             ExcelPackage.LicenseContext =
-//                 LicenseContext.NonCommercial;
+            csv.WriteField("Question");
+            csv.WriteField("Answer");
+            csv.WriteField("Feedback");
+            csv.WriteField("Date");
+            csv.NextRecord();
 
-//             using var package = new ExcelPackage();
+            foreach (var item in data)
+            {
+                csv.WriteField(item.Question?.Text);
+                csv.WriteField(item.Response);
+                csv.WriteField(item.Feedback?.title + " - " + item.Feedback?.FinalNote);
+                csv.WriteField(item.CreatedAt.ToString("yyyy-MM-dd"));
+                csv.NextRecord();
+            }
 
-//             var sheet =
-//                 package.Workbook.Worksheets.Add("Feedback");
+            writer.Flush();
 
-//             sheet.Cells[1, 1].Value = "Question";
-//             sheet.Cells[1, 2].Value = "Answer";
-//             sheet.Cells[1, 3].Value = "Date";
-
-//             int row = 2;
-
-//             foreach (var item in data)
-//             {
-//                 sheet.Cells[row, 1].Value =
-//                     item.Question.Text;
-
-//                 sheet.Cells[row, 2].Value =
-//                     item.Response;
-
-//                 sheet.Cells[row, 3].Value =
-//                     item.CreatedAt.ToString("yyyy-MM-dd");
-
-//                 row++;
-//             }
-
-//             var bytes = package.GetAsByteArray();
-
-//             return (
-//                 bytes,
-//                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-//                 "feedback.xlsx"
-//             );
-//         }
-
-//         // ================= CSV =================
-
-//         private (byte[], string, string)
-//             GenerateCsv(List<Models.Answer> data)
-//         {
-//             var builder = new StringBuilder();
-
-//             builder.AppendLine("Question,Answer,Date");
-
-//             foreach (var item in data)
-//             {
-//                 builder.AppendLine(
-//                     $"\"{item.Question.Text}\"," +
-//                     $"\"{item.Response}\"," +
-//                     $"\"{item.CreatedAt:yyyy-MM-dd}\""
-//                 );
-//             }
-
-//             return (
-//                 Encoding.UTF8.GetBytes(builder.ToString()),
-//                 "text/csv",
-//                 "feedback.csv"
-//             );
-//         }
-//     }
-// }
+            return (
+                memoryStream.ToArray(),
+                "text/csv",
+                "feedback.csv"
+            );
+        }
+    }
+}
