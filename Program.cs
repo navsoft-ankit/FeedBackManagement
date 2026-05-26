@@ -44,17 +44,19 @@ builder.Services.AddAuthentication(
 .AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = false,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
+{
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
 
-        ValidIssuer = configuration["Jwt:Issuer"],
-        IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(configuration["Jwt:Key"])
-        )
-    };
+    ValidIssuer = configuration["Jwt:Issuer"],
+    ValidAudience = configuration["Jwt:Audience"],
+
+    IssuerSigningKey = new SymmetricSecurityKey(
+        Encoding.UTF8.GetBytes(configuration["Jwt:Key"])
+    )
+};
 });
 
 builder.Services.AddControllers()
@@ -78,7 +80,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    // await DbSeeder.SeedAsync(context);
+    await DbSeeder.SeedAsync(context);
 }
 
 // -------------------- MIDDLEWARE --------------------

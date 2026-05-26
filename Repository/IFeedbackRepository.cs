@@ -1,5 +1,5 @@
 using Authservice.Models;
-
+namespace Authservice.Repository;
 public interface IFeedbackRepository
 {
     Task<List<Feedback>> GetAllFeedbacksAsync();
@@ -8,4 +8,9 @@ public interface IFeedbackRepository
     Task AddFeedbackAsync(Feedback feedback);
     Task UpdateFeedbackAsync(Feedback feedback);
     Task DeleteFeedbackAsync(Guid id);
+    Task<List<Answer>> GetAnswerByDateAsync
+    (
+        DateTime fromDate,
+        DateTime toDate
+    );
 }

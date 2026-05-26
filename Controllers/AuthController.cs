@@ -62,30 +62,51 @@ namespace Authservice.Controllers
             );
         }
 
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO forgotPasswordDTO)
-        {
-            var user = await _userService.GetUserByEmailAsync(forgotPasswordDTO.Email);
+       [HttpPost("forgot-password")]
+public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDTO dto)
+{
+    var user = await _userService.GetUserByEmailAsync(dto.Email);
 
-            if (user == null)
-                return BadRequest("User not found.");
+    if (user == null)
+        return BadRequest("User not found.");
 
-            return Ok("Password reset link sent (mock).");
-        }
+    // 1. generate token
+    var token = Guid.NewGuid().ToString();
 
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
-        {
-            var user = await _userService.GetUserByEmailAsync(dto.Email);
+    // 2. save token with expiry (DB or cache)
+    user.ResetToken = token;
+    user.ResetTokenExpiry = DateTime.UtcNow.AddMinutes(30);
 
-            if (user == null)
-                return BadRequest("User not found.");
+    await _userService.UpdateUserAsync(user);
 
-            user.Password = dto.NewPassword;
+    // 3. create reset link
+    var resetLink = $"https://yourfrontend.com/reset-password?token={token}&email={user.Email}";
 
-            await _userService.UpdateUserAsync(user);
+    // 4. send email (এখানে mock)
+    return Ok(new { message = "Reset link generated", link = resetLink });
+}
+[HttpPost("reset-password")]
+public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDTO dto)
+{
+    var user = await _userService.GetUserByEmailAsync(dto.Email);
 
-            return Ok("Password reset successful.");
-        }
+    if (user == null)
+        return BadRequest("User not found.");
+
+    // check token
+    if (user.ResetToken != dto.Token || user.ResetTokenExpiry < DateTime.UtcNow)
+        return BadRequest("Invalid or expired token.");
+
+    // set new password
+    user.Password = dto.NewPassword;
+
+    // clear token
+    user.ResetToken = null;
+    user.ResetTokenExpiry = null;
+
+    await _userService.UpdateUserAsync(user);
+
+    return Ok("Password reset successful.");
+}
     }
 }

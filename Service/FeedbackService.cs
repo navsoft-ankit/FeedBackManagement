@@ -65,7 +65,6 @@ namespace Authservice.Service
             }
             await _feedbackRepository.AddFeedbackAsync(feedback);
 
-
             return true;
         }
     }

@@ -22,11 +22,14 @@ namespace Authservice.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Answer", b =>
+            modelBuilder.Entity("Authservice.Models.Answer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("FeedbackId")
                         .HasColumnType("uniqueidentifier");
@@ -47,7 +50,7 @@ namespace Authservice.Migrations
 
                     b.HasIndex("QuestionId");
 
-                    b.ToTable("Answer");
+                    b.ToTable("Answers");
                 });
 
             modelBuilder.Entity("Authservice.Models.Feedback", b =>
@@ -172,6 +175,12 @@ namespace Authservice.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ResetToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetTokenExpiry")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -181,7 +190,7 @@ namespace Authservice.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Answer", b =>
+            modelBuilder.Entity("Authservice.Models.Answer", b =>
                 {
                     b.HasOne("Authservice.Models.Feedback", "Feedback")
                         .WithMany("Answers")

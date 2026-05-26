@@ -53,5 +53,11 @@ namespace Authservice.Repository
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<List<Answer>> GetAnswerByDateAsync(DateTime fromDate, DateTime toDate)
+        {
+            return await _context.Answers
+                .Where(a => a.CreatedAt >= fromDate && a.CreatedAt <= toDate)
+                .ToListAsync();
+        }
     }
 }

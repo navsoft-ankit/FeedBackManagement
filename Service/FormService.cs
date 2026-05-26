@@ -191,31 +191,4 @@ public class FormService : IFormService
         return true;
     }
 
-    public async Task<bool> SubmitFeedbackAsync(SubmitFeedbackDTO dto)
-    {
-        var feedback = new Feedback
-        {
-            FormId = dto.FormId,
-            Name = dto.Name,
-            Email = dto.Email,
-            Designation = dto.Designation,
-            FinalNote = dto.FinalNote,
-            Answers = new List<Answer>()
-        };
-
-        foreach (var a in dto.Answers)
-        {
-            feedback.Answers.Add(new Answer
-            {
-                QuestionId = a.QuestionId,
-                Response = a.Response
-            });
-        }
-
-        _context.Feedbacks.Add(feedback);
-        await _context.SaveChangesAsync();
-
-        return true;
-    }
-
 }

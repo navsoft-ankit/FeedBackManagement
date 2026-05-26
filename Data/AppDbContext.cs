@@ -13,4 +13,5 @@ namespace Authservice.Data;
         public DbSet<Option> Options { get; set; }
         public DbSet<FeedbackForm> FeedbackForms { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Answer> Answers { get; set; }
     }
