@@ -25,3 +25,8 @@ A backend system built with **ASP.NET Core Web API** that allows users to create
 - SQL Server
 - C#
 - Postman
+
+On a new server you need to run the below commands
+dotnet tool install --global dotnet-ef
+dotnet ef migrations add InitialCreate
+dotnet ef database update
