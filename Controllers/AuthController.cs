@@ -22,6 +22,7 @@ namespace Authservice.Controllers
         }
 
         [HttpPost("register")]
+        [Authorize(AuthenticationSchemes = "ApiKey")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
             var existingUser = await _userService.GetUserByEmailAsync(registerDTO.Email);
@@ -44,6 +45,7 @@ namespace Authservice.Controllers
             return Ok("User registered successfully.");
         }
         [HttpPost("login")]
+        [Authorize(AuthenticationSchemes = "ApiKey")]
         public async Task<IActionResult> Login([FromBody] LoginDTO loginDTO)
         {
             var user = await _userService.GetUserByEmailAsync(loginDTO.Email);
