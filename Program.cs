@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json.Serialization;
+using Authservice.Authentication;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,7 +57,9 @@ builder.Services.AddAuthentication(
             Encoding.UTF8.GetBytes(configuration["Jwt:Key"])
         )
     };
-});
+})
+.AddScheme<AuthenticationSchemeOptions, ApiKeyAuthHandler>(
+    "ApiKey", options => { });
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

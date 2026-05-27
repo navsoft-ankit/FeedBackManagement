@@ -6,6 +6,7 @@ using Authservice.Service;
 
 namespace Authservice.Controllers;
 
+[Authorize] // পুরো controller secure
 [ApiController]
 [Route("api/forms")]
 [Authorize] // পুরো controller secure

@@ -66,7 +66,7 @@ public class FormService : IFormService
                 Type = question.Type.ToString(),
                 Options = optionsList,
                 Note = question.Note,
-                MetadataJson = question.MetadataJson.ToString()
+                MetadataJson = question.MetadataJson
             });
         }
 
@@ -104,7 +104,7 @@ public class FormService : IFormService
                 Type = q.Type.ToString(),
                 Options = q.Options.Select(o => o.Value).ToList(),
                 Note = q.Note,
-                MetadataJson = q.MetadataJson.ToString()
+                MetadataJson = q.MetadataJson
             }).ToList()
         };
     }
